@@ -5,6 +5,7 @@ using UnityEngine;
 public class Float : MonoBehaviour
 {
     public Rigidbody rigidbody;
+    public Water water;
     [SerializeField] private float depthBeforeSubmerged = 1f;
     [SerializeField] private float displacementAmount = 3f;
     [SerializeField] private float waterDrag = 0.99f;
@@ -16,7 +17,7 @@ public class Float : MonoBehaviour
     {
         rigidbody.AddForceAtPosition(Physics.gravity / floaterCount, transform.position, ForceMode.Acceleration);
 
-        float waveHeight = WaveManager.instance.GetWaveHeight(transform.position.x);
+        float waveHeight = water.WaterLevel(transform.position);
 
         if (transform.position.y < waveHeight) {
             float displacementMultiplayer = Mathf.Clamp01((waveHeight - transform.position.y) / depthBeforeSubmerged) * displacementAmount;
