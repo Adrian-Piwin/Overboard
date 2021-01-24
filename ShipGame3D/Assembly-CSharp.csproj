@@ -58,6 +58,8 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Float.cs" />
     <Compile Include="Assets\Scripts\Water.cs" />
+    <Compile Include="Assets\Scripts\BoatController.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
