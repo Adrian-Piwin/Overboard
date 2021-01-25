@@ -13,10 +13,10 @@ TagManager:
   - UI
   - 
   - 
-  - BoatFloat
+  - Boat
   - Player
-  - 
-  - 
+  - Cargo
+  - Holding
   - 
   - 
   - 

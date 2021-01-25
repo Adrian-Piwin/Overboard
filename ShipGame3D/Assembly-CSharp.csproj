@@ -60,6 +60,10 @@
     <Compile Include="Assets\Scripts\BoatController.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Models\sailor\test.cs" />
+    <Compile Include="Assets\Scripts\PlayerAnimations.cs" />
+    <Compile Include="Assets\Scripts\PlayerHold.cs" />
+    <Compile Include="Assets\Scripts\CargoOverboard.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -655,6 +659,12 @@
     </Reference>
     <Reference Include="com.unity.quicksearch">
       <HintPath>Library\ScriptAssemblies\com.unity.quicksearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cinemachine">
+      <HintPath>Library\ScriptAssemblies\Cinemachine.dll</HintPath>
+    </Reference>
+    <Reference Include="com.unity.cinemachine.editor">
+      <HintPath>Library\ScriptAssemblies\com.unity.cinemachine.editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
