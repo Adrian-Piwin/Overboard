@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform forwardDir;
     [SerializeField] private Transform playerHoldTransform;
     [SerializeField] private PlayerHold playerHoldScript;
+    [SerializeField] private GameObject holdPlaceholderPrefab;
     [SerializeField] private int holdLayer;
     [SerializeField] private int cargoLayer;
 
@@ -36,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [NonSerialized] public Vector2 moveInput;
     [NonSerialized] public bool isHolding;
     private GameObject holdPlaceholderObj;
+    private Transform currentHeldObj;
 
     void Start()
     {
@@ -91,10 +93,7 @@ public class PlayerMovement : MonoBehaviour
     private void ExtraGravity() 
     {
         // Apply extra gravity more realistic movement 
-        if (IsOnSlope())
-            body.AddForce(Vector3.down * slopeGravityMod);
-        else
-            body.AddForce(Vector3.down * slopeGravityMod);
+        body.AddForce(Vector3.down * slopeGravityMod);
     }
 
     private void Rotate() 
@@ -106,20 +105,19 @@ public class PlayerMovement : MonoBehaviour
     private void Hold()
     {
         // Toggle holding
-        if (playerHoldScript.canHold && leftClickInput && !isHolding)
+        if (playerHoldScript.canHold && leftClickInput && !isHolding && playerHoldScript.currentObject.GetComponent<Rigidbody>().mass <= body.mass)
         {
             StartHold();
         }
         else if (leftClickInput && isHolding)
         {
-            EndHold();
+            EndHold(false);
         }
 
         // If holding and pressing right click, throw towards player dir
         if (isHolding && rightClickInput)
         {
-            EndHold();
-            playerHoldScript.currentObject.GetComponent<Rigidbody>().AddForce((playerDir * throwForce) + (Vector3.up * throwForceUp), ForceMode.Impulse);
+            EndHold(true);
         }
     }
 
@@ -127,31 +125,39 @@ public class PlayerMovement : MonoBehaviour
     {
         // Do once on start of holding
         isHolding = true;
+        currentHeldObj = playerHoldScript.currentObject;
 
         // Create placeholder obj in cargo object
-        holdPlaceholderObj = Instantiate(new GameObject(), GameObject.Find("Cargo").transform);
+        holdPlaceholderObj = Instantiate(holdPlaceholderPrefab, GameObject.Find("Cargo").transform);
 
-        playerHoldScript.currentObject.GetComponent<ConstantForce>().force = Vector3.zero;
-        playerHoldScript.currentObject.GetComponent<Rigidbody>().freezeRotation = true;
-        playerHoldScript.currentObject.parent = playerHoldTransform;
+        if (currentHeldObj.GetComponent<Rigidbody>().isKinematic)
+            currentHeldObj.GetComponent<Rigidbody>().isKinematic = false;
 
-        playerHoldScript.currentObject.gameObject.layer = holdLayer;
+        currentHeldObj.GetComponent<ConstantForce>().force = Vector3.zero;
+        currentHeldObj.GetComponent<Rigidbody>().freezeRotation = true;
+        currentHeldObj.parent = playerHoldTransform;
+        currentHeldObj.gameObject.layer = holdLayer;
     }
 
-    private void EndHold()
+    private void EndHold(bool doesThrow)
     {
         // Do once on end of holding
-        isHolding = false;
 
         // Destroy placeholder obj in cargo object
         if (holdPlaceholderObj != null)
             Destroy(holdPlaceholderObj);
 
-        playerHoldScript.currentObject.GetComponent<Rigidbody>().freezeRotation = false;
-        playerHoldScript.currentObject.GetComponent<ConstantForce>().force = new Vector3(0, -cargoGravityMod, 0);
-        playerHoldScript.currentObject.parent = GameObject.Find("Cargo").transform;
+        currentHeldObj.GetComponent<ConstantForce>().force = new Vector3(0, -cargoGravityMod, 0);
+        currentHeldObj.GetComponent<Rigidbody>().freezeRotation = false;
+        currentHeldObj.parent = GameObject.Find("Cargo").transform;
+        currentHeldObj.gameObject.layer = cargoLayer;
 
-        playerHoldScript.currentObject.gameObject.layer = cargoLayer;
+        // Throw object
+        if (doesThrow) 
+            currentHeldObj.GetComponent<Rigidbody>().AddForce((playerDir * throwForce) + (Vector3.up * throwForceUp), ForceMode.Impulse);
+
+        currentHeldObj = null;
+        isHolding = false;
     }
 
     void HoldMovement()
@@ -163,7 +169,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsMoving())
             targetPosition = playerHoldTransform.position + (playerHoldTransform.forward * holdMoveOffset);
 
-        Rigidbody objectHeld = playerHoldScript.currentObject.GetComponent<Rigidbody>();
+        Rigidbody objectHeld = currentHeldObj.GetComponent<Rigidbody>();
         Vector3 motionVector = targetPosition - objectHeld.position;
 
         Vector3 targetVelocity = Vector3.MoveTowards(objectHeld.velocity, motionVector * holdMagnitude, (motionVector.magnitude / holdDistance) * holdFollowSpeed);
@@ -173,28 +179,9 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            EndHold();
+            EndHold(false);
             return;
         }
-
-        // HANDLE ROTATION:
-        if (objectHeld.angularVelocity.magnitude < 20f)
-        {
-            objectHeld.MoveRotation(Quaternion.Slerp(objectHeld.rotation, Quaternion.LookRotation(transform.forward), Time.deltaTime * rotationSpeed));
-        }
-    }
-
-    private bool IsOnSlope()
-    {
-        Debug.DrawRay(transform.position + (transform.forward * 0.5f), Vector3.down * distanceToSlope);
-        Debug.DrawRay(transform.position - (transform.forward * 0.5f), Vector3.down * distanceToSlope);
-
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, distanceToSlope))
-            if (hit.normal != Vector3.up)
-                return true;
-
-        return false;
     }
 
     public bool IsMoving() 

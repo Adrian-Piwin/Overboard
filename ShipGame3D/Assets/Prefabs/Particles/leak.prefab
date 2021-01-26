@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2147788917554076223}
   - component: {fileID: 2147788917554076220}
   - component: {fileID: 2147788917554076221}
+  - component: {fileID: 7526943953937384689}
   m_Layer: 0
   m_Name: leak
   m_TagString: Untagged
@@ -47,7 +48,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
-  prewarm: 0
+  prewarm: 1
   playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
@@ -168,7 +169,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4.604698
+      scalar: 4.1087427
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -660,7 +661,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 4
+    angle: 6.060544
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -746,7 +747,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.4
+      value: 0.056250572
       mode: 0
       spread: 0
       speed:
@@ -1321,19 +1322,19 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0, g: 0.28014588, b: 1, a: 1}
+        key0: {r: 0, g: 0.595581, b: 0.8396226, a: 1}
         key1: {r: 0.3820755, g: 0.68740296, b: 1, a: 1}
-        key2: {r: 0, g: 0.91142464, b: 1, a: 0}
-        key3: {r: 0, g: 0, b: 0, a: 0}
-        key4: {r: 0, g: 0, b: 0, a: 0}
+        key2: {r: 0, g: 0.22155344, b: 0.41509432, a: 0}
+        key3: {r: 0.34254637, g: 0.71058005, b: 1, a: 0}
+        key4: {r: 0, g: 0.91142464, b: 1, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 14649
-        ctime1: 43176
-        ctime2: 65535
-        ctime3: 0
-        ctime4: 0
+        ctime1: 33731
+        ctime2: 44525
+        ctime3: 52814
+        ctime4: 65535
         ctime5: 0
         ctime6: 0
         ctime7: 0
@@ -1346,7 +1347,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_NumColorKeys: 3
+        m_NumColorKeys: 5
         m_NumAlphaKeys: 2
       minGradient:
         serializedVersion: 2
@@ -4830,3 +4831,17 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &7526943953937384689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147788917554076218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca9406885660214cbb91a669d3cd553, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waterHeight: 1
+  waterPower: 0.4

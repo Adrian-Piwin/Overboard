@@ -7,12 +7,15 @@ public class PlayerHold : MonoBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private int cargoLayer;
+
     [NonSerialized] public bool canHold;
-    [NonSerialized] public Transform currentObject;
+    [SerializeField] public Transform currentObject;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == cargoLayer && !playerMovement.isHolding) {
+        if (playerMovement.isHolding) return;
+
+        if (other.gameObject.layer == cargoLayer && currentObject == null) {
             currentObject = other.transform;
             canHold = true;
         }
@@ -20,7 +23,7 @@ public class PlayerHold : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == cargoLayer && !playerMovement.isHolding)
+        if (other.transform == currentObject)
         {
             currentObject = null;
             canHold = false;
