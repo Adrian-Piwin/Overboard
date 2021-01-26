@@ -12,7 +12,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float rotateSpeed;
     [SerializeField] private float drag;
     [SerializeField] private float gravityMod;
+    [SerializeField] private float slopeGravityMod;
     [SerializeField] private float cargoGravityMod;
+    [SerializeField] private float distanceToSlope;
 
     [Header("Hold Settings")]
     [SerializeField] private float throwForce;
@@ -26,15 +28,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private int holdLayer;
     [SerializeField] private int cargoLayer;
 
+    private GameManagement gameManagement;
     private Rigidbody body;
     private Vector3 playerDir;
     private bool leftClickInput;
     private bool rightClickInput;
     [NonSerialized] public Vector2 moveInput;
     [NonSerialized] public bool isHolding;
+    private GameObject holdPlaceholderObj;
 
     void Start()
     {
+        gameManagement = GameObject.Find("Game Management").GetComponent<GameManagement>();
+        playerDir = transform.forward.normalized * -1;
         body = GetComponent<Rigidbody>();
     }
     
@@ -49,10 +55,13 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         HoldMovement();
+        ExtraGravity();
     }
 
     private void GetInput() 
     {
+        if (!gameManagement.isPlaying) return;
+
         // Player input
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         leftClickInput = Input.GetButtonUp("Fire1");
@@ -76,9 +85,16 @@ public class PlayerMovement : MonoBehaviour
 
         // Drag
         body.velocity = new Vector3(body.velocity.x * drag, body.velocity.y, body.velocity.z * drag);
+        
+    }
 
-        // Keep player grounded
-        body.AddForce(Vector3.down * gravityMod);
+    private void ExtraGravity() 
+    {
+        // Apply extra gravity more realistic movement 
+        if (IsOnSlope())
+            body.AddForce(Vector3.down * slopeGravityMod);
+        else
+            body.AddForce(Vector3.down * slopeGravityMod);
     }
 
     private void Rotate() 
@@ -109,8 +125,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartHold() 
     {
+        // Do once on start of holding
         isHolding = true;
 
+        // Create placeholder obj in cargo object
+        holdPlaceholderObj = Instantiate(new GameObject(), GameObject.Find("Cargo").transform);
 
         playerHoldScript.currentObject.GetComponent<ConstantForce>().force = Vector3.zero;
         playerHoldScript.currentObject.GetComponent<Rigidbody>().freezeRotation = true;
@@ -121,7 +140,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndHold()
     {
+        // Do once on end of holding
         isHolding = false;
+
+        // Destroy placeholder obj in cargo object
+        if (holdPlaceholderObj != null)
+            Destroy(holdPlaceholderObj);
 
         playerHoldScript.currentObject.GetComponent<Rigidbody>().freezeRotation = false;
         playerHoldScript.currentObject.GetComponent<ConstantForce>().force = new Vector3(0, -cargoGravityMod, 0);
@@ -158,6 +182,19 @@ public class PlayerMovement : MonoBehaviour
         {
             objectHeld.MoveRotation(Quaternion.Slerp(objectHeld.rotation, Quaternion.LookRotation(transform.forward), Time.deltaTime * rotationSpeed));
         }
+    }
+
+    private bool IsOnSlope()
+    {
+        Debug.DrawRay(transform.position + (transform.forward * 0.5f), Vector3.down * distanceToSlope);
+        Debug.DrawRay(transform.position - (transform.forward * 0.5f), Vector3.down * distanceToSlope);
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, distanceToSlope))
+            if (hit.normal != Vector3.up)
+                return true;
+
+        return false;
     }
 
     public bool IsMoving() 
