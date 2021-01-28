@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerHold : MonoBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private int cargoLayer;
+    [SerializeField] private LayerMask cargoLayer;
 
     [NonSerialized] public bool canHold;
     [SerializeField] public Transform currentObject;
@@ -15,7 +15,7 @@ public class PlayerHold : MonoBehaviour
     {
         if (playerMovement.isHolding) return;
 
-        if (other.gameObject.layer == cargoLayer && currentObject == null) {
+        if (cargoLayer == (cargoLayer | (1 << other.gameObject.layer)) && currentObject == null) {
             currentObject = other.transform;
             canHold = true;
         }

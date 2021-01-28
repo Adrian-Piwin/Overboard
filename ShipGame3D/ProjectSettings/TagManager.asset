@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Level
   layers:
   - Default
   - TransparentFX
@@ -17,10 +18,10 @@ TagManager:
   - Player
   - Cargo
   - Holding
-  - 
-  - 
-  - 
-  - 
+  - PlayerBoundry
+  - CargoBoundry
+  - BottomLip
+  - HeavyCargo
   - 
   - 
   - 
@@ -40,4 +41,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Particles
+    uniqueID: 3623136437
+    locked: 0
+  - name: Objects
+    uniqueID: 465644569
     locked: 0

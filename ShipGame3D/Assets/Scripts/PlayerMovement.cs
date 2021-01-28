@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float gravityMod;
     [SerializeField] private float slopeGravityMod;
     [SerializeField] private float cargoGravityMod;
-    [SerializeField] private float distanceToSlope;
+    [SerializeField] private float distanceToHeavyCargo;
 
     [Header("Hold Settings")]
     [SerializeField] private float throwForce;
@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject holdPlaceholderPrefab;
     [SerializeField] private int holdLayer;
     [SerializeField] private int cargoLayer;
+    [SerializeField] private LayerMask heavyCargoLayer;
 
     private GameManagement gameManagement;
     private Rigidbody body;
@@ -36,7 +37,6 @@ public class PlayerMovement : MonoBehaviour
     private bool rightClickInput;
     [NonSerialized] public Vector2 moveInput;
     [NonSerialized] public bool isHolding;
-    private GameObject holdPlaceholderObj;
     private Transform currentHeldObj;
 
     void Start()
@@ -62,7 +62,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void GetInput() 
     {
-        if (!gameManagement.isPlaying) return;
+        if (!gameManagement.isPlaying) {
+            moveInput = Vector2.zero;
+            return;
+        }
+
 
         // Player input
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -105,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
     private void Hold()
     {
         // Toggle holding
-        if (playerHoldScript.canHold && leftClickInput && !isHolding && playerHoldScript.currentObject.GetComponent<Rigidbody>().mass <= body.mass)
+        if (playerHoldScript.canHold && leftClickInput && !isHolding)
         {
             StartHold();
         }
@@ -127,9 +131,6 @@ public class PlayerMovement : MonoBehaviour
         isHolding = true;
         currentHeldObj = playerHoldScript.currentObject;
 
-        // Create placeholder obj in cargo object
-        holdPlaceholderObj = Instantiate(holdPlaceholderPrefab, GameObject.Find("Cargo").transform);
-
         if (currentHeldObj.GetComponent<Rigidbody>().isKinematic)
             currentHeldObj.GetComponent<Rigidbody>().isKinematic = false;
 
@@ -142,10 +143,6 @@ public class PlayerMovement : MonoBehaviour
     private void EndHold(bool doesThrow)
     {
         // Do once on end of holding
-
-        // Destroy placeholder obj in cargo object
-        if (holdPlaceholderObj != null)
-            Destroy(holdPlaceholderObj);
 
         currentHeldObj.GetComponent<ConstantForce>().force = new Vector3(0, -cargoGravityMod, 0);
         currentHeldObj.GetComponent<Rigidbody>().freezeRotation = false;
@@ -182,6 +179,17 @@ public class PlayerMovement : MonoBehaviour
             EndHold(false);
             return;
         }
+    }
+
+    public bool IsFacingHeavyCargo() 
+    {
+
+        if (Physics.Raycast(transform.position + new Vector3(0, 1.5f, 0), transform.forward*-1, distanceToHeavyCargo, heavyCargoLayer))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public bool IsMoving() 

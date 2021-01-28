@@ -14,6 +14,7 @@ public class GameManagement : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private GameObject MainMenu;
+    [SerializeField] private GameObject GameplayUI;
 
     private int currentLevel;
     [SerializeField] public bool isPlaying;
@@ -41,15 +42,9 @@ public class GameManagement : MonoBehaviour
 
         // Change UI
         MainMenu.SetActive(false);
+        GameplayUI.SetActive(true);
 
         isPlaying = true;
-    }
-
-    private void PlayerWins()
-    {
-        if (!isPlaying) return;
-
-        isPlaying = false;
     }
 
     private void PlayerLoses()
@@ -58,13 +53,15 @@ public class GameManagement : MonoBehaviour
 
         isPlaying = false;
 
+        // Change UI
+        MainMenu.SetActive(true);
+        GameplayUI.SetActive(false);
     }
 
-    public void EmptyCargo() 
+    public void Sunk() 
     {
-        // Called when there is no more cargo
-        PlayerWins();
+        // Called when sink timer ends
+        PlayerLoses();
     }
-
 
 }

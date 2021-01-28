@@ -31,7 +31,16 @@ public class PlayerAnimations : MonoBehaviour
         }
         else 
         {
-            animator.SetBool("isWalking", false); ;
+            animator.SetBool("isWalking", false); 
+        }
+
+        if (playerMovement.IsFacingHeavyCargo())
+        {
+            animator.SetBool("isFacingHeavyCargo", true);
+        }
+        else 
+        {
+            animator.SetBool("isFacingHeavyCargo", false);
         }
 
 
