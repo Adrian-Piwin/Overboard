@@ -11739,7 +11739,7 @@ MonoBehaviour:
   cargoGravityMod: 15
   distanceToHeavyCargo: 2
   throwForce: 8
-  throwForceUp: 8
+  throwForceUp: 12
   holdMagnitude: 10
   holdDistance: 0.1
   holdFollowSpeed: 5

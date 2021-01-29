@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3864501864302589940, guid: 74da8a9997fdf03488b7a6e5a020a4dc, type: 3}
       propertyPath: throwForce
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3864501864302589940, guid: 74da8a9997fdf03488b7a6e5a020a4dc, type: 3}
       propertyPath: heavyThrowForce

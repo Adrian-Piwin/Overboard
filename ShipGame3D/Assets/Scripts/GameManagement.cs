@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
+using TMPro;
 
 public class GameManagement : MonoBehaviour
 {
@@ -15,8 +16,12 @@ public class GameManagement : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private GameObject MainMenu;
     [SerializeField] private GameObject GameplayUI;
+    [SerializeField] private GameObject EndgameUI;
 
-    private int currentLevel;
+    [SerializeField] private TextMeshProUGUI scoreUI;
+    [SerializeField] private TextMeshProUGUI highscoreUI;
+    [SerializeField] private GameObject newScoreUI;
+
     [SerializeField] public bool isPlaying;
 
     private void Start()
@@ -38,10 +43,12 @@ public class GameManagement : MonoBehaviour
         }
 
         // Instantiate new level
-        Instantiate(levelList[currentLevel], Vector3.zero, Quaternion.identity, transform);
+        Instantiate(levelList[UnityEngine.Random.Range(0, levelList.Count)], Vector3.zero, Quaternion.identity, transform);
 
         // Change UI
         MainMenu.SetActive(false);
+        EndgameUI.SetActive(false);
+        newScoreUI.SetActive(false);
         GameplayUI.SetActive(true);
 
         isPlaying = true;
@@ -54,13 +61,46 @@ public class GameManagement : MonoBehaviour
         isPlaying = false;
 
         // Change UI
-        MainMenu.SetActive(true);
+        EndgameUI.SetActive(true);
         GameplayUI.SetActive(false);
     }
 
-    public void Sunk() 
+    public void ResetToMenu() 
+    {
+        // Destroy any existing levels
+        if (transform.childCount != 0)
+        {
+            foreach (Transform level in transform)
+            {
+                Destroy(level.gameObject);
+            }
+        }
+
+        // Instantiate main menu level
+        Instantiate(mainMenuLevel, Vector3.zero, Quaternion.identity, transform);
+
+        // Change UI
+        EndgameUI.SetActive(false);
+        newScoreUI.SetActive(false);
+        MainMenu.SetActive(true);
+    }
+
+    public void Sunk(float score) 
     {
         // Called when sink timer ends
+
+        int highScore = PlayerPrefs.GetInt("highscore", 0);
+
+        scoreUI.text = (int)score + "";
+        if (highScore < score)
+        {
+            newScoreUI.SetActive(true);
+            highScore = (int)score;
+        }
+
+        PlayerPrefs.SetInt("highscore", highScore);
+        highscoreUI.text = highScore + "";
+
         PlayerLoses();
     }
 

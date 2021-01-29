@@ -139,7 +139,7 @@ public class Level : MonoBehaviour
         int i = 0;
         foreach (Transform leak in leaks)
         {
-            leak.GetComponent<ParticleSystem>().startSpeed = startingLeakSize[i] * Mathf.Clamp((currentWeight / maxWeight), 0.2f, 1f);
+            leak.GetComponent<ParticleSystem>().startSpeed = startingLeakSize[i] * Mathf.Clamp((currentWeight / maxWeight), 0.3f, 1f);
             i++;
         }
     }
@@ -173,7 +173,7 @@ public class Level : MonoBehaviour
         // Play sink animation
         boatAnimator.Play("BoatSink");
         // Tell game management the player sunk
-        gameManagement.Sunk();
+        gameManagement.Sunk(score);
     }
 
     IEnumerator StartSinkingEffects() 
