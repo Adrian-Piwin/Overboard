@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private bool rightClickInput;
     [NonSerialized] public Vector2 moveInput;
     [NonSerialized] public bool isHolding;
+    [NonSerialized] public bool isThrowing;
     private Transform currentHeldObj;
 
     void Start()
@@ -150,8 +151,11 @@ public class PlayerMovement : MonoBehaviour
         currentHeldObj.gameObject.layer = cargoLayer;
 
         // Throw object
-        if (doesThrow) 
+        if (doesThrow)
+        {
+            isThrowing = true;
             currentHeldObj.GetComponent<Rigidbody>().AddForce((playerDir * throwForce) + (Vector3.up * throwForceUp), ForceMode.Impulse);
+        }
 
         currentHeldObj = null;
         isHolding = false;

@@ -52,6 +52,16 @@ public class PlayerAnimations : MonoBehaviour
         {
             animator.SetBool("isHolding", false);
         }
+
+        if (playerMovement.isThrowing)
+        {
+            animator.SetBool("isThrowing", true);
+            playerMovement.isThrowing = false;
+        }
+        else
+        {
+            animator.SetBool("isThrowing", false);
+        }
     }
 
     private void UpdateParticleSystems() 

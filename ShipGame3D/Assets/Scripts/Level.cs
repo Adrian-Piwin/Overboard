@@ -139,7 +139,7 @@ public class Level : MonoBehaviour
         int i = 0;
         foreach (Transform leak in leaks)
         {
-            leak.GetComponent<ParticleSystem>().startSpeed = startingLeakSize[i] * (currentWeight / maxWeight);
+            leak.GetComponent<ParticleSystem>().startSpeed = startingLeakSize[i] * Mathf.Clamp((currentWeight / maxWeight), 0.2f, 1f);
             i++;
         }
     }
